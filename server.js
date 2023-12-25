@@ -1,17 +1,27 @@
 const mongoose = require("mongoose");
-const dotenv = require("dotenv").config();
+require("dotenv").config();
 
 const app = require("./app");
 
-//database connection
-mongoose.connect(process.env.DATABASE_LOCAL).then(() => {
-  console.log(`Database connection is successful`);
-});
+// Database connection
+mongoose
+  .connect(
+    `mongodb+srv://${process.env.DB_NAME}:${process.env.DB_PASS}@cluster0.jasc8yb.mongodb.net/?retryWrites=true&w=majority`,
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }
+  )
+  .then(() => {
+    console.log("Database connection is successful");
 
-//server
-
-const port = process.env.PORT || 5000;
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
-  console.log("dbConnected");
-});
+    // Start the server after successful database connection
+    const port = process.env.PORT || 5000;
+    app.listen(port, () => {
+      console.log(`Server is running on port ${port}`);
+      console.log("dbConnected");
+    });
+  })
+  .catch((error) => {
+    console.error("Database connection error:", error.message);
+  });
